@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="com.shsxt.crm.db.dao.CusDevPlanDao">
+    <sql id="cus_dev_plan_columns">
+      id,plan_item as planItem,sale_chance_id as saleChanceId,plan_date as planDate,exe_affect  as exeAffect,
+      is_valid as isValid ,create_date as createDate,update_date as updateDate
+    </sql>
+	<select id="queryForPage"  parameterType="cusDevPlanQUery" resultType="cusDevPlan">
+	   select <include refid="cus_dev_plan_columns"/>
+	   from  t_cus_dev_plan
+	   <where>
+	      is_valid=1 and sale_chance_id=#{sid}
+	   </where>
+	</select>
+	
+	
+	<insert id="insert" parameterType="cusDevPlan">
+	  insert into t_cus_dev_plan(plan_item,plan_date,exe_affect,sale_chance_id,create_date,update_date,is_valid)
+	  values(#{planItem},#{planDate},#{exeAffect},#{saleChanceId},#{createDate},#{updateDate},#{isValid})
+	</insert>
+	
+	<select id="queryById" parameterType="int" resultType="cusDevPlan">
+	  select <include refid="cus_dev_plan_columns"/>
+	   from t_cus_dev_plan where id=#{id} and is_valid=1
+	</select>
+	
+	<update id="update" parameterType="cusDevPlan">
+	     update t_cus_dev_plan
+	     set plan_item=#{planItem},plan_date=#{planDate},exe_affect=#{exeAffect},update_date=#{updateDate}
+	     where id=#{id} and is_valid=1
+	</update>
+	
+	
+	<update id="deleteBatch">
+	  update t_cus_dev_plan set is_valid=0
+	  where id in
+	  <foreach collection="array" item="item" open="(" separator="," close=")">
+	     #{item}
+	  </foreach>
+	
+	</update>
+	
+
+</mapper>  
+

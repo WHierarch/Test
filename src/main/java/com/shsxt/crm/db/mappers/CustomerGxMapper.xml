@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="com.shsxt.crm.db.dao.CustomerGxDao">
+     <select id="queryCustomerGxDtosByParams" parameterType="customerGxQuery" resultType="customerGxDto">
+	   SELECT
+			c.name,
+			sum(d.sum) AS sum
+		FROM
+			t_customer c
+		LEFT JOIN t_customer_order o ON c.id = o.cus_id
+		LEFT JOIN t_order_details d ON o.id = d.order_id
+		<where>
+		   o.state = 1
+		   <if test="state !=null and state!=''">
+		     and c.state=#{state}
+		   </if>
+		</where>
+		GROUP BY
+			c.id
+     </select>
+
+</mapper>  
+

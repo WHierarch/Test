@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="com.shsxt.crm.db.dao.SaleChanceDao">
+    <sql id="saleChance_columns">
+      id,customer_name as customerName,chance_source as chanceSource,
+      cgjl,overview,link_man as linkMan,link_phone as linkPhone,description,
+      create_man as createMan,assign_man as assignMan,assign_time as assignTime,
+      state,dev_result as devResult,is_valid as isValid ,create_date as createDate,update_date as updateDate
+    </sql>
+	<select id="queryForPage"  parameterType="saleChanceQUery" resultType="saleChance">
+	   select <include refid="saleChance_columns"/>
+	   from  t_sale_chance
+	   <where>
+	      is_valid=1
+	      <if test="customerName !=null and customerName !=''">
+	         and customer_name like concat('%',#{customerName},'%')
+	      </if>
+	       <if test="createMan !=null and createMan !=''">
+	         and create_man like concat('%',#{createMan},'%')
+	      </if>
+	       <if test="state !=null ">
+	         and state = #{state}
+	      </if>
+	   </where>
+	</select>
+	
+	
+	<select id="queryById" parameterType="int" resultType="saleChance">
+	  select <include refid="saleChance_columns"/>
+	  from t_sale_chance 
+	  where id=#{id} and is_valid=1
+	</select>
+	
+	<insert id="insert" parameterType="saleChance">
+	   insert into t_sale_chance(customer_name,chance_source,cgjl,overview,link_man,link_phone,description,
+	   create_man,assign_man,assign_time , state,dev_result ,is_valid ,create_date,update_date)
+	   values(#{customerName},#{chanceSource},#{cgjl},#{overview},#{linkMan},#{linkPhone},#{description},
+	   #{createMan},#{assignMan},#{assignTime},#{state},#{devResult},#{isValid},#{createDate},#{updateDate})
+	</insert>
+	
+	<update id="update">
+	  update t_sale_chance 
+	  set customer_name =#{customerName},chance_source =#{chanceSource},
+      cgjl=#{cgjl},overview=#{overview},link_man =#{linkMan},link_phone =#{linkPhone},description=#{description},
+      create_man = #{createMan},assign_man =#{assignMan},assign_time=#{assignTime},
+      state=#{state},dev_result =#{devResult},update_date =#{updateDate}
+      where id=#{id} and is_valid=1
+	</update>
+	
+	<update id="deleteBatch">
+	   update t_sale_chance 
+	   set is_valid=0
+	   where id in 
+	   <foreach collection="array" item="item" open="(" separator="," close=")">
+	     #{item}
+	   </foreach>
+	</update>
+	
+	<update id="updateSaleChanceDevResult">
+	   update t_sale_chance
+	   set dev_result=#{state}
+	   where id=#{sid}
+	</update>
+
+</mapper>  
+

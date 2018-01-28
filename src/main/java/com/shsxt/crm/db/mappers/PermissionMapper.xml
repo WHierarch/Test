@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="com.shsxt.crm.db.dao.PermissionDao">
+   <select id="queryPermissionsByRoleId" parameterType="int" resultType="int">
+      select count(1)
+      from t_permission
+      where role_id=#{rid}
+   </select>
+   
+   <delete id="deleteHistoryPermissionsByRoleId" parameterType="int">
+      delete from t_permission
+      where role_id=#{rid}
+   </delete>
+   <insert id="addNewPermissionsBatch" parameterType="list">
+      insert into t_permission(role_id,module_id,acl_value,create_date,update_date)
+      values
+      <foreach collection="list" item="item" separator=",">
+        (#{item.roleId},#{item.moduleId},#{item.aclValue},#{item.createDate},#{item.updateDate})
+      </foreach>
+   </insert>
+   
+   
+   <select id="queryModuleIdsByRoleId" parameterType="int" resultType="int">
+      select module_id
+      from t_permission
+      where role_id=#{roleId}
+   </select>
+   
+   
+   <select id="queryAllPermissionsByRoleIds" parameterType="list" resultType="string">
+        select DISTINCT acl_value
+        from t_permission
+        where role_id in
+        <foreach collection="list" item="item" open="(" separator="," close=")">
+          #{item}
+        </foreach>
+   
+   </select>
+</mapper>  
+
